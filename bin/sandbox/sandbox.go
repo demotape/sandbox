@@ -1,10 +1,11 @@
 package main
 
 import (
-	"../../go-demotape/controller"
+	// "../../go-demotape/controller"
 	"fmt"
 	"github.com/bmizerany/pat"
 	"github.com/codegangsta/negroni"
+	"github.com/demotape/sandbox"
 	"net/http"
 	"os"
 )
@@ -13,9 +14,9 @@ func main() {
 	fmt.Println("Demotape sandbox manager started")
 	mux := pat.New()
 
-	mux.Post("/sandboxes", http.HandlerFunc(controller.CreateSandbox))
-	mux.Put("/sandboxes/:image_name/start", http.HandlerFunc(controller.StartSandbox))
-	mux.Put("/sandboxes/:container_id/checkin", http.HandlerFunc(controller.CheckinSandbox))
+	mux.Post("/sandboxes", http.HandlerFunc(sandbox.CreateSandbox))
+	mux.Put("/sandboxes/:image_name/start", http.HandlerFunc(sandbox.StartSandbox))
+	mux.Put("/sandboxes/:container_id/checkin", http.HandlerFunc(sandbox.CheckinSandbox))
 
 	n := negroni.Classic()
 	n.UseHandler(mux)

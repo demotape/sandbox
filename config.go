@@ -1,4 +1,4 @@
-package demotape
+package sandbox
 
 import (
 	"path"
