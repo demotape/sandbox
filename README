@@ -1,0 +1,7 @@
+## How to build
+```
+go get github.com/codegangsta/negroni
+go get github.com/bmizerany/pat
+go get github.com/demotape/sandbox
+go build bin/sandbox/sandbox.go
+```
