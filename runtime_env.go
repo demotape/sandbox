@@ -1,8 +1,6 @@
 package sandbox
 
 import (
-	"../../config"
-	"../../ssh-key"
 	"io/ioutil"
 	"os"
 )
@@ -14,13 +12,13 @@ type RuntimeEnv struct {
 
 type SshEnv struct {
 	PortNum   int
-	KeyPair   *sshkey.KeyPair
+	KeyPair   *KeyPair
 	DotSshDir string
 }
 
 func CreateRuntimeDir() (string, error) {
-	os.MkdirAll(config.Host.RunTimeDir, 0644)
-	dir, err := ioutil.TempDir(config.Host.RunTimeDir, "runtime")
+	os.MkdirAll(Host.RunTimeDir, 0644)
+	dir, err := ioutil.TempDir(Host.RunTimeDir, "runtime")
 
 	if err != nil {
 		return "", err

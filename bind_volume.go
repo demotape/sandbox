@@ -1,8 +1,6 @@
 package sandbox
 
 import (
-	"../../config"
-	"../runtime_env"
 	"fmt"
 	"path"
 	"reflect"
@@ -24,10 +22,10 @@ func (b *BindVolume) VolumeMappings() []string {
 	return vols
 }
 
-func NewBindVolumes(runtimeEnv *runtime_env.RuntimeEnv) BindVolume {
+func NewBindVolumes(runtimeEnv *RuntimeEnv) BindVolume {
 
 	return BindVolume{
 		DotSsh:   runtimeEnv.SshEnv.DotSshDir + ":/root/.ssh",
-		Tutorial: path.Join(runtimeEnv.RuntimeDir, config.WelcomeDir) + ":" + config.Container.WelcomeDir,
+		Tutorial: path.Join(runtimeEnv.RuntimeDir, WelcomeDir) + ":" + Container.WelcomeDir,
 	}
 }

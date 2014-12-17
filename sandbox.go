@@ -1,13 +1,6 @@
 package sandbox
 
 import (
-	"../banner"
-	"../config"
-	"../ssh-key"
-	"../tutorial"
-	"./bind_volume"
-	"./port_mapping"
-	"./runtime_env"
 	"archive/tar"
 	"bytes"
 	"fmt"
@@ -31,11 +24,11 @@ const (
 )
 
 type Sandbox struct {
-	ImageName   string                  `json:"image_name"`
-	RuntimeEnv  *runtime_env.RuntimeEnv `json:"runtime_env"`
-	ContainerId string                  `json:"container_id"`
-	BindVolume  bind_volume.BindVolume
-	PortMapping port_mapping.PortMapping
+	ImageName   string      `json:"image_name"`
+	RuntimeEnv  *RuntimeEnv `json:"runtime_env"`
+	ContainerId string      `json:"container_id"`
+	BindVolume  BindVolume
+	PortMapping PortMapping
 }
 
 var (
@@ -153,8 +146,8 @@ func CreateDockerfile(content string) io.Reader {
 	return inputbuf
 }
 
-func CreateRunTimeEnv(tutorial *tutorial.Tutorial, name string) (*runtime_env.RuntimeEnv, error) {
-	runtimeDir, err := runtime_env.CreateRuntimeDir()
+func CreateRunTimeEnv(tutorial *Tutorial, name string) (*RuntimeEnv, error) {
+	runtimeDir, err := CreateRuntimeDir()
 
 	if err != nil {
 		fmt.Println("Fail to create runtime dir", err)
@@ -170,26 +163,26 @@ func CreateRunTimeEnv(tutorial *tutorial.Tutorial, name string) (*runtime_env.Ru
 
 	prepareWelcome(runtimeDir, tutorial, name)
 
-	runtimeEnv := runtime_env.RuntimeEnv{RuntimeDir: runtimeDir, SshEnv: sshEnv}
+	runtimeEnv := RuntimeEnv{RuntimeDir: runtimeDir, SshEnv: sshEnv}
 
 	return &runtimeEnv, nil
 }
 
-func prepareWelcome(runtimeDir string, tutorial *tutorial.Tutorial, name string) {
-	welcomeDir := path.Join(runtimeDir, config.WelcomeDir)
+func prepareWelcome(runtimeDir string, tutorial *Tutorial, name string) {
+	welcomeDir := path.Join(runtimeDir, WelcomeDir)
 	os.MkdirAll(welcomeDir, 0644)
 
 	tutoFile := path.Join(welcomeDir, "tutorial.sh")
 	ioutil.WriteFile(tutoFile, []byte(tutorial.ToCommands()), 0766)
 
 	bannerFile := path.Join(welcomeDir, "banner.sh")
-	ioutil.WriteFile(bannerFile, []byte(banner.Welcome(name)), 0766)
+	ioutil.WriteFile(bannerFile, []byte(Welcome(name)), 0766)
 }
 
-func prepareSsh(runtimeDir string) (*runtime_env.SshEnv, error) {
+func prepareSsh(runtimeDir string) (*SshEnv, error) {
 	sessionDir, err := createSessionDir("build")
 
-	keyPair, err := sshkey.GenerateKeys(sessionDir)
+	keyPair, err := GenerateKeys(sessionDir)
 	if err != nil {
 		return nil, err
 	}
@@ -200,7 +193,7 @@ func prepareSsh(runtimeDir string) (*runtime_env.SshEnv, error) {
 	authorizedKeys := path.Join(dotSshDir, "authorized_keys")
 	ioutil.WriteFile(authorizedKeys, keyPair.Pub, 0400)
 
-	sshEnv := runtime_env.SshEnv{randomPortNum(), keyPair, dotSshDir}
+	sshEnv := SshEnv{randomPortNum(), keyPair, dotSshDir}
 
 	return &sshEnv, nil
 }

@@ -1,10 +1,6 @@
 package sandbox
 
 import (
-	"../sandbox"
-	"../sandbox/bind_volume"
-	"../sandbox/port_mapping"
-	"../tutorial"
 	"crypto/sha1"
 	"encoding/json"
 	"fmt"
@@ -29,7 +25,7 @@ type SandboxStarted struct {
 
 type StartSandboxData struct {
 	ImageName string `json:"image_name"`
-	Tutorial  tutorial.Tutorial
+	Tutorial  Tutorial
 }
 
 type CreateSandboxData struct {
@@ -133,7 +129,7 @@ func createSandbox(name string) error {
 
 	dockerfile := fmt.Sprintf("From %s\n", "demotape")
 	tag := "latest"
-	err := sandbox.BuildImage(name, tag, dockerfile)
+	err := BuildImage(name, tag, dockerfile)
 
 	if err != nil {
 		fmt.Println("Fail to create base image")
@@ -143,10 +139,10 @@ func createSandbox(name string) error {
 	return nil
 }
 
-func startSandbox(name string, tutorial *tutorial.Tutorial) (*sandbox.Sandbox, error) {
+func startSandbox(name string, tutorial *Tutorial) (*Sandbox, error) {
 
-	runtimeEnv, err := sandbox.CreateRunTimeEnv(tutorial, name)
-	bindVol := bind_volume.NewBindVolumes(runtimeEnv)
+	runtimeEnv, err := CreateRunTimeEnv(tutorial, name)
+	bindVol := NewBindVolumes(runtimeEnv)
 
 	if err != nil {
 		fmt.Println("Fail to prepareSsh", err)
@@ -155,10 +151,10 @@ func startSandbox(name string, tutorial *tutorial.Tutorial) (*sandbox.Sandbox, e
 
 	sshEnv := runtimeEnv.SshEnv
 
-	portMapping := &port_mapping.PortMapping{}
+	portMapping := &PortMapping{}
 	portMapping.AddBinding("22/tcp", strconv.Itoa(sshEnv.PortNum))
 
-	s := sandbox.Sandbox{
+	s := Sandbox{
 		ImageName:   fmt.Sprintf("%s:latest", name),
 		RuntimeEnv:  runtimeEnv,
 		BindVolume:  bindVol,
@@ -179,7 +175,7 @@ func startSandbox(name string, tutorial *tutorial.Tutorial) (*sandbox.Sandbox, e
 
 func checkinSandbox(containerId string) error {
 	var err error
-	s := sandbox.Sandbox{ContainerId: containerId}
+	s := Sandbox{ContainerId: containerId}
 
 	err = s.Commit()
 
