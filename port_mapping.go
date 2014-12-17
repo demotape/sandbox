@@ -17,7 +17,7 @@ func (pm *PortMapping) AddBinding(exposedPorts docker.Port, bindPorts string) {
 
 	pm.PortBindings = make(map[docker.Port][]docker.PortBinding)
 	pm.PortBindings[exposedPorts] = []docker.PortBinding{{
-		HostIp:   "0.0.0.0",
+		HostIP:   "0.0.0.0",
 		HostPort: bindPorts,
 	}}
 
