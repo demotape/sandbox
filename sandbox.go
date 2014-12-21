@@ -33,14 +33,20 @@ type Sandbox struct {
 
 var (
 	client *docker.Client
-	HostIP = "192.168.33.10"
+	HostIP = os.Getenv("SANDBOX_SITE")
 )
 
 func init() {
 	endpoint := os.Getenv("DOCKER_HOST")
+
 	if endpoint == "" {
 		panic("DOCKER_HOST is not set")
 	}
+
+	if HostIP == "" {
+		panic("SANDBOX_SITE is not set")
+	}
+
 	client, _ = docker.NewClient(endpoint)
 
 	os.MkdirAll(sessionDirBase, 644)
