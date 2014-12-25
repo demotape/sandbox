@@ -25,6 +25,8 @@ type SandboxStarted struct {
 
 type StartSandboxData struct {
 	ImageName string `json:"image_name"`
+	DemoName  string `json:"demo_name"`
+	Author    string `json:"author"`
 	Tutorial  Tutorial
 }
 
@@ -81,7 +83,7 @@ func StartSandbox(w http.ResponseWriter, r *http.Request) {
 	name := params.Get(":image_name")
 	json.NewDecoder(r.Body).Decode(&data)
 
-	sandbox, err := startSandbox(data.ImageName, &data.Tutorial)
+	sandbox, err := startSandbox(data.ImageName, data.DemoName, data.Author, &data.Tutorial)
 
 	if sandbox != nil && err == nil {
 		res = SandboxStarted{
@@ -139,9 +141,9 @@ func createSandbox(name string) error {
 	return nil
 }
 
-func startSandbox(name string, tutorial *Tutorial) (*Sandbox, error) {
+func startSandbox(name string, demoName string, author string, tutorial *Tutorial) (*Sandbox, error) {
 
-	runtimeEnv, err := CreateRunTimeEnv(tutorial, name)
+	runtimeEnv, err := CreateRunTimeEnv(tutorial, demoName, author)
 	bindVol := NewBindVolumes(runtimeEnv)
 
 	if err != nil {

@@ -152,7 +152,7 @@ func CreateDockerfile(content string) io.Reader {
 	return inputbuf
 }
 
-func CreateRunTimeEnv(tutorial *Tutorial, name string) (*RuntimeEnv, error) {
+func CreateRunTimeEnv(tutorial *Tutorial, demoName string, author string) (*RuntimeEnv, error) {
 	runtimeDir, err := CreateRuntimeDir()
 
 	if err != nil {
@@ -167,14 +167,14 @@ func CreateRunTimeEnv(tutorial *Tutorial, name string) (*RuntimeEnv, error) {
 		return nil, err
 	}
 
-	prepareWelcome(runtimeDir, tutorial, name)
+	prepareWelcome(runtimeDir, tutorial, demoName, author)
 
 	runtimeEnv := RuntimeEnv{RuntimeDir: runtimeDir, SshEnv: sshEnv}
 
 	return &runtimeEnv, nil
 }
 
-func prepareWelcome(runtimeDir string, tutorial *Tutorial, name string) {
+func prepareWelcome(runtimeDir string, tutorial *Tutorial, demoName string, author string) {
 	welcomeDir := path.Join(runtimeDir, WelcomeDir)
 	os.MkdirAll(welcomeDir, 0644)
 
@@ -182,7 +182,7 @@ func prepareWelcome(runtimeDir string, tutorial *Tutorial, name string) {
 	ioutil.WriteFile(tutoFile, []byte(tutorial.ToCommands()), 0766)
 
 	bannerFile := path.Join(welcomeDir, "banner.sh")
-	ioutil.WriteFile(bannerFile, []byte(Welcome(name)), 0766)
+	ioutil.WriteFile(bannerFile, []byte(Welcome(demoName, author)), 0766)
 }
 
 func prepareSsh(runtimeDir string) (*SshEnv, error) {
