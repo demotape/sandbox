@@ -30,6 +30,11 @@ type StartSandboxData struct {
 	Tutorial  Tutorial
 }
 
+type CheckinSandboxData struct {
+	ImageName string `json:"image_name"`
+	Tag       string `json:"tag"`
+}
+
 type CreateSandboxData struct {
 	ImageName string `json:"image_name"`
 }
@@ -109,11 +114,13 @@ func StartSandbox(w http.ResponseWriter, r *http.Request) {
 }
 
 func CheckinSandbox(w http.ResponseWriter, req *http.Request) {
+	var data CheckinSandboxData
 	param := req.URL.Query()
-	name := param.Get(":container_id")
+	containerId := param.Get(":container_id")
+	json.NewDecoder(req.Body).Decode(&data)
 	var res interface{}
 
-	err := checkinSandbox(name)
+	err := checkinSandbox(containerId, data.ImageName, data.Tag)
 
 	if err != nil {
 		res = Error{
@@ -175,9 +182,9 @@ func startSandbox(name string, demoName string, author string, tutorial *Tutoria
 	return &s, nil
 }
 
-func checkinSandbox(containerId string) error {
+func checkinSandbox(containerId string, imageName string, tag string) error {
 	var err error
-	s := Sandbox{ContainerId: containerId}
+	s := Sandbox{ContainerId: containerId, ImageName: imageName, Tag: tag}
 
 	err = s.Commit()
 

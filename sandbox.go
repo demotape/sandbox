@@ -27,6 +27,7 @@ type Sandbox struct {
 	ImageName   string      `json:"image_name"`
 	RuntimeEnv  *RuntimeEnv `json:"runtime_env"`
 	ContainerId string      `json:"container_id"`
+	Tag         string      `json:"tag"`
 	BindVolume  BindVolume
 	PortMapping PortMapping
 }
@@ -98,8 +99,7 @@ func (s *Sandbox) Stop() error {
 }
 
 func (s *Sandbox) Commit() error {
-	// containerOpt := docker.CommitContainerOptions{Container: s.ContainerId, Repository: name}
-	containerOpt := docker.CommitContainerOptions{Container: s.ContainerId}
+	containerOpt := docker.CommitContainerOptions{Container: s.ContainerId, Repository: s.ImageName, Tag: s.Tag}
 	_, err := client.CommitContainer(containerOpt)
 
 	if err != nil {
