@@ -22,7 +22,7 @@ func init() {
 	}
 }
 
-func Clean() {
+func Clean() int {
 	timeLimit := int64(1000)
 	client, _ := docker.NewClient(endpoint)
 	currentTime := time.Now().Local().Unix()
@@ -42,5 +42,7 @@ func Clean() {
 	}
 
 	fmt.Println("janitor is called!!!")
+
+	return 1
 
 }
